@@ -73,36 +73,37 @@
           return r;
         }
         
-        int JManager::calc_intersection(int i) {
-           std::multiset<int> seen;
-           int count = 0;
-           
-           std::multiset<int> real_v = get_real_vect(m_layers[i]);
-
-	    std::cout << "\n\n\n\n****intersections for " << i << "->" << i + 1 << "\n" ;
-
-           for (unsigned int j=0; j<real_v.size(); j++ ) {
-             std::cout << "  ." << i << " "  << j <<" looking by the name of" << m_layers[i][j]->get_name() << std::endl;
-	     count = count + count_intersections(seen,get_insts(m_layers[i][j]));
-	   }
-	    std::cout << "intersections for " << i << "->" << i + 1 << " ***"<< count  << "*** \n \n" ;
-	    return count;
-        }
-        
- 
-        int JManager::count_intersections(std::multiset<int>& seen, const std::vector<JInstance*>& v1) {
-	      std::multiset<int> v = get_real_vect(v1,true);
-	    
-	      int res = 0;
-	      for(std::multiset<int>::const_iterator i=v.begin();i!=v.end();++i) {
-		
-		res = res + std::count_if(seen.begin(), seen.end(), ay_qez_ban(*i));
-		seen.insert(*i);
-	      }
-
-	   return res;
+         int JManager::calc_intersection(int i) {
+                std::vector<int> conections_count(m_layers[i].size(), 0);
+                int count = 0;
+                //std::cout << "\n\n\n\n****intersections for " << i << "->" << i + 1 << "\n" ;
+                for (unsigned int j = 0; j < m_layers[i].size(); ++j) {
+                        count += count_intersections(conections_count, get_insts(m_layers[i][j]));
+                }
+                //std::cout << "intersections for " << i << "->" << i + 1 << " ***" << count  << "*** \n \n" ;
+                return count;
         }
  
+ 
+        int JManager::count_intersections(std::vector<int>& seen, const std::vector<JInstance*>& v1) {
+                int res = 0;
+                const int seen_size = seen.size();
+                int sz = v1.size();
+                std::vector<int> rows(sz);
+                for(int i = 0; i < sz; ++i) {
+                        rows[i] = v1[i]->get_rownum();
+                }
+                for(int i = 0; i < sz; ++i) {
+                        int index = rows[i];
+                        for (int k = index + 1; k < seen_size; ++k) {
+                                res += seen[k];
+                        }
+                }
+                for (int i = 0; i < sz; ++i) {
+                        ++seen[rows[i]];
+                }
+                return res;
+        } 
  
         //FIXME!
         std::vector<JInstance*> JManager::get_insts(JInstance* i) {

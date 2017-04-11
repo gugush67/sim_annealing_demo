@@ -65,7 +65,7 @@ class JManager {
 
 	int calc_intersections();
         int calc_intersection(int i);
-        int count_intersections(std::multiset<int>& seen, const std::vector<JInstance*>& v1);
+        int count_intersections(std::vector<int>& seen, const std::vector<JInstance*>& v1);
 
         std::multiset<int> get_real_vect(const std::vector<JInstance*>& iv,bool);
         std::vector<JInstance*> get_insts(JInstance* i);
